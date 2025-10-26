@@ -6,6 +6,10 @@ __pycache__/
 # C extensions
 *.so
 
+#Here's stuff that Callen put in here
+data/
+*.npy
+
 # Distribution / packaging
 .Python
 build/
