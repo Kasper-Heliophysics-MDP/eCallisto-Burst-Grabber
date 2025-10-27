@@ -24,9 +24,9 @@ def usage():
     print()
     print("Arguments:")
     print("  station              Name of the observatory station (e.g. GERMANY-DLR)")
-    print("  year                 Four-digit year (e.g. 2025)")
     print("  month                Two-digit month (01)")
     print("  day                  Two-digit day (31)")
+    print("  year                 Four-digit year (e.g. 2025)")
     print("  start_time (optional) Time of the first recording as seen in the filename (e.g. 093000 for 09:30:00)")
     sys.exit(1)
 

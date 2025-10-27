@@ -22,32 +22,66 @@ UNITS_PER_SECOND = 4
 WINDOW_SIZE = 150*UNITS_PER_SECOND #each recording will be 5 minutes
 DATA_DIR = "bursts" #where will this script save files to
 
-def show_and_maybe_save(img, title="image", save_path="output.npy"):
+def select_and_save_bursts(data, starts, ends, start_time_obj, save_file_prefix):
     """
-    This function plots data and asks the user if it should be saved or not
-    
-    Args:
-        img (np.Array): processed spectrogram downloaded from eCallisto 
-        title (str): title of the graph
-        save_path (str): where to save the file
-        
-    Returns:
-        None
-    """
-    # Show image
-    plt.imshow(img, aspect="auto",
-        origin="lower",
-        cmap="viridis")
-    plt.title(title)
-    plt.show(block=True)  # block=True pauses until the window is closed
+    Displays all bursts in a grid and allows the user to select which to save.
 
-    # Ask user for confirmation
-    ans = input("Save this image? (y/n): ").strip().lower()
-    if ans == 'y':
-        np.save(save_path, img)
-        print(f"✅ Image saved to {save_path}")
-    else:
-        print("❌ Image not saved.")
+    Click an image to toggle selection (red border = selected).
+    When done, close the figure window, and the selected bursts will be saved.
+    """
+
+    bursts = []
+    titles = []
+    for i in range(len(starts)):
+        delta = timedelta(seconds=0.25 * starts[i])
+        new_t = start_time_obj + delta
+        time_str = new_t.strftime("%H%M%S")
+
+        bursts.append(data[:, starts[i]:ends[i]])
+        titles.append(f"{time_str}")
+
+    n = len(bursts)
+    ncols = min(4, n)
+    nrows = int(np.ceil(n / ncols))
+
+    fig, axes = plt.subplots(nrows, ncols, figsize=(4*ncols, 3*nrows))
+    axes = np.array(axes).reshape(-1)
+
+    selected = np.zeros(n, dtype=bool)
+
+    def on_click(event):
+        for i, ax in enumerate(axes):
+            if event.inaxes == ax:
+                selected[i] = not selected[i]
+                ax.set_title(f"{titles[i]} {'✅' if selected[i] else ''}")
+                for spine in ax.spines.values():
+                    spine.set_edgecolor("red" if selected[i] else "black")
+                    spine.set_linewidth(2 if selected[i] else 0.5)
+                fig.canvas.draw_idle()
+                break
+
+    for i, (ax, burst) in enumerate(zip(axes, bursts)):
+        im = ax.imshow(burst, aspect="auto", origin="lower", cmap="viridis")
+        ax.set_title(titles[i])
+        ax.axis("off")
+
+    for j in range(len(bursts), len(axes)):
+        axes[j].axis("off")
+
+    fig.suptitle("Click on bursts to select them for saving.\nClose the window when done.", fontsize=14)
+    fig.canvas.mpl_connect("button_press_event", on_click)
+
+    plt.tight_layout()
+    plt.show()
+
+    # After closing figure, save selected bursts
+    for i, sel in enumerate(selected):
+        if sel:
+            save_path = os.path.join(DATA_DIR, f"{save_file_prefix}{titles[i]}.npy")
+            np.save(save_path, bursts[i])
+            print(f"✅ Saved {save_path}")
+
+    print("All done!")
 
 def get_burst_windows(indices, data_length):
     """
@@ -127,10 +161,8 @@ def get_high_values(spec):
 
     return burst_centers
 
-
-
 def usage():
-    print("Usage: python locate_bursts.py <file_path> <start_time>")
+    print("Usage: python locate_bursts.py <file_path> <save_file_prefix> <start_time>")
     print()
     print("Arguments:")
     print("  file_path            path to .npy file holding data collected over one day")
@@ -162,17 +194,9 @@ if __name__ == "__main__":
     print(f"There are {len(potential_bursts)} potential bursts. Here's what they look like...")
 
     start_time_obj = datetime.strptime(start_time, "%H%M%S")
-    os.makedirs(DATA_DIR, exist_ok=True)
-    for i in range(len(starts)):
-        
-        #get the time in utc that this recording starts
-        delta = timedelta(seconds=0.25 * starts[i])
-        new_t = start_time_obj + delta
-        time_str = new_t.strftime("%H%M%S")
 
-        #get the path to save and ask user if they want to save it
-        save_path = os.path.join(DATA_DIR, save_file_pre_fix + time_str + ".npy")
-        title = f"Burst occured at {time_str}"
-        show_and_maybe_save(data[:, starts[i]:ends[i]], title, save_path)    
+    os.makedirs(DATA_DIR, exist_ok=True)
+    select_and_save_bursts(data, starts, ends, start_time_obj, save_file_pre_fix)
+  
     
 
