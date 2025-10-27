@@ -35,7 +35,7 @@ def upload_folder(local_folder, dropbox_folder, access_token):
         for filename in files:
             local_path = os.path.join(root, filename)
             rel_path = os.path.relpath(local_path, local_folder)
-            dropbox_path = f"/{dropbox_folder}/{rel_path}".replace("\\", "/")
+            dropbox_path = f"{dropbox_folder}/{rel_path}".replace("\\", "/")
 
             with open(local_path, "rb") as f:
                 dbx.files_upload(f.read(), dropbox_path, mode=dropbox.files.WriteMode("overwrite"))
@@ -48,5 +48,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     access_token = sys.argv[1]
-    upload_folder(LOCAL_DATA_DIR, DROPBOX_DATA_DIR, access_token)
-    upload_file(METADATA, DROPBOX_DIR, access_token)
+    #upload_folder(LOCAL_DATA_DIR, DROPBOX_DATA_DIR, access_token)
+    upload_file(METADATA, DROPBOX_DIR + "/" + METADATA, access_token)

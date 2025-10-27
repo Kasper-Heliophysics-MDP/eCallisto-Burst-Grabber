@@ -55,9 +55,10 @@ arg_sets = [
 
 if __name__ == "__main__":
 
+    #the if statements are to modulify the code. Almost like a jupyter notebook but w/o using jupyter
     #collect data for all the candidates
     #WARNING this will take a long time but you don't need to be at the computer for all of it
-    if(1):
+    if(0):
         for args in arg_sets:
             cmd = ["python", "pull_data.py"] + args
             print("Running:", " ".join(cmd))
@@ -65,12 +66,12 @@ if __name__ == "__main__":
 
     #run the manual collection process
     #This is an interactive selction process
-    if(0):
+    if(1):
         for args in arg_sets:
-            desc = args[0] + "-" + args[1] + "-" + args[2] + "-" + args[3]
+            desc = f"{args[0]}-{int(args[1]):02d}-{int(args[2]):02d}-{int(args[3]):04d}"
             start_time = args[4]
-            file_path = "data/spec-" + desc + ".npy"
-            save_file = "burst-" + desc + "-" + start_time + ".npy"
+            file_path = "data\spec-" + desc + ".npy"
+            save_file = "burst-" + desc
             cl_arg = [file_path, save_file, start_time]
             cmd = ["python", "locate_bursts.py"] + cl_arg
             print("Running:", " ".join(cmd))

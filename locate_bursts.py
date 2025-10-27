@@ -22,7 +22,7 @@ UNITS_PER_SECOND = 4
 WINDOW_SIZE = 150*UNITS_PER_SECOND #each recording will be 5 minutes
 DATA_DIR = "bursts" #where will this script save files to
 
-def select_and_save_bursts(data, starts, ends, start_time_obj, save_file_prefix):
+def select_and_save_bursts(data, starts, ends, start_time_obj, save_file_prefix, file_path):
     """
     Displays all bursts in a grid and allows the user to select which to save.
 
@@ -68,7 +68,7 @@ def select_and_save_bursts(data, starts, ends, start_time_obj, save_file_prefix)
     for j in range(len(bursts), len(axes)):
         axes[j].axis("off")
 
-    fig.suptitle("Click on bursts to select them for saving.\nClose the window when done.", fontsize=14)
+    fig.suptitle(f"Bursts for: {file_path}\nClick on bursts to select them for saving\nClose the window when done", fontsize=14)
     fig.canvas.mpl_connect("button_press_event", on_click)
 
     plt.tight_layout()
@@ -77,7 +77,7 @@ def select_and_save_bursts(data, starts, ends, start_time_obj, save_file_prefix)
     # After closing figure, save selected bursts
     for i, sel in enumerate(selected):
         if sel:
-            save_path = os.path.join(DATA_DIR, f"{save_file_prefix}{titles[i]}.npy")
+            save_path = os.path.join(DATA_DIR, f"{save_file_prefix}-{titles[i]}.npy")
             np.save(save_path, bursts[i])
             print(f"✅ Saved {save_path}")
 
@@ -196,7 +196,7 @@ if __name__ == "__main__":
     start_time_obj = datetime.strptime(start_time, "%H%M%S")
 
     os.makedirs(DATA_DIR, exist_ok=True)
-    select_and_save_bursts(data, starts, ends, start_time_obj, save_file_pre_fix)
+    select_and_save_bursts(data, starts, ends, start_time_obj, save_file_pre_fix, file_path)
   
     
 

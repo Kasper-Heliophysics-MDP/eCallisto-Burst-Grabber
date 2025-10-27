@@ -21,29 +21,38 @@ if __name__ == "__main__":
     # --- Collect file info ---
     rows = []
     for filename in os.listdir(DATA_DIR):
-        if filename.endswith(".npy"):
-            # Remove extension and split by '-'
-            base = os.path.splitext(filename)[0]  # e.g., "spec-MONGOLIA-UB-05-13-2025-043511"
-            parts = base.split('-')
+        if not filename.endswith(".npy"):
+            continue
 
-            if len(parts) < 7:
-                print(f"Skipping malformed filename: {filename}")
-                continue
+        base = os.path.splitext(filename)[0]  # remove ".npy"
+        parts = base.split('-')
 
-            file_type = parts[0]           # e.g., "spec"
-            station = f"{parts[1]}-{parts[2]}"  # e.g., "MONGOLIA-UB"
-            month, day, year, time = parts[3:7]
+        # Find where the date starts (month-day-year-time)
+        date_start = None
+        for i, p in enumerate(parts):
+            if p.isdigit() and 1 <= int(p) <= 12 and i + 3 < len(parts):
+                # next three should be day, year, time
+                date_start = i
+                break
 
-            rows.append({
-                "filename": filename,
-                "station": station,
-                "month": month,
-                "day": day,
-                "year": year,
-                "time": time,
-                "type": ""  # fill in type manually later
-            })
+        if date_start is None or len(parts) < date_start + 4:
+            print(f"Skipping malformed filename: {filename}")
+            continue
 
+        file_type = parts[0]
+        station = "-".join(parts[1:date_start])  # join all in-between parts
+        month, day, year, time = parts[date_start:date_start + 4]
+
+        rows.append({
+            "filename": filename,
+            "station": station,
+            "month": month,
+            "day": day,
+            "year": year,
+            "time": time,
+            "type": ""  # fill in later
+        })
+        
     # --- Write to CSV ---
     with open(OUTPUT_CSV, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["filename", "station", "month", "day", "year", "time", "type"])

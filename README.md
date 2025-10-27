@@ -72,6 +72,14 @@ In the future if you want to make your own python code that accesses dropbox, ma
 
     `python pull_data.py <station> <month> <day> <year> [start_time]`
 
+### `resize.py`
+
+- **Purpose:** With skimage, resize all data to 128x128 for ml processing
+
+- **Usage:**
+
+    `python resize.py`
+
 ### `upload.py`
 
 - **Purpose:** Upload your data and your metadata to dropbox. WARNING if you try to save a path that already exists to dropbox, it will overwrite the file currently at that path
