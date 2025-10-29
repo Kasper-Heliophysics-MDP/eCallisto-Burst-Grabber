@@ -183,11 +183,15 @@ def parse_args(argv):
 
 if __name__ == "__main__":
 
+    plt.rcParams['font.family'] = 'Segoe UI Symbol' #for the green checkmark
+
     file_path, save_file_pre_fix, start_time = parse_args(sys.argv)
         
     data = np.load(file_path)
 
     print("Locating potential bursts...")
+
+    #TODO better detection system
     n_freq, n_time = data.shape
     potential_bursts = get_high_values(data)
     starts, ends = get_burst_windows(potential_bursts, n_time)

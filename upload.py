@@ -14,7 +14,7 @@ import os
 import sys
 
 LOCAL_DATA_DIR = "bursts"
-METADATA = "init-colection-10-26-2025.csv"
+METADATA = "more-colection-10-27-2025.csv"
 DROPBOX_DIR = "/ml"
 DROPBOX_DATA_DIR = DROPBOX_DIR + "/processed_data"
 
@@ -48,5 +48,5 @@ if __name__ == "__main__":
         sys.exit(1)
 
     access_token = sys.argv[1]
-    #upload_folder(LOCAL_DATA_DIR, DROPBOX_DATA_DIR, access_token)
-    upload_file(METADATA, DROPBOX_DIR + "/" + METADATA, access_token)
+    upload_folder(LOCAL_DATA_DIR, DROPBOX_DATA_DIR, access_token)
+    #upload_file(METADATA, DROPBOX_DIR + "/" + METADATA, access_token)

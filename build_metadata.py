@@ -14,7 +14,7 @@ import csv
 
 # --- Configuration ---
 DATA_DIR = "bursts"  # path to your folder
-OUTPUT_CSV = "init-colection-10-26-2025.csv" #change this before each time running the script to avoid overwriting
+OUTPUT_CSV = "more-colection-10-27-2025.csv" #change this before each time running the script to avoid overwriting
 
 if __name__ == "__main__":
 
@@ -52,7 +52,7 @@ if __name__ == "__main__":
             "time": time,
             "type": ""  # fill in later
         })
-        
+
     # --- Write to CSV ---
     with open(OUTPUT_CSV, "w", newline="") as f:
         writer = csv.DictWriter(f, fieldnames=["filename", "station", "month", "day", "year", "time", "type"])

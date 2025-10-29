@@ -79,7 +79,7 @@ if __name__ == "__main__":
     data, _ = one_day(station, year, month, day, start_time)
 
     print("Preprocessing...")
-    data = preprocess(data)
+    #data = preprocess(data)
 
     save_file_post_fix = "spec-" + station + "-" + str(f"{int(month):02d}") + "-" + str(f"{int(day):02d}") + "-" + str(f"{int(year):04d}") + ".npy"
     os.makedirs(DATA_DIR, exist_ok=True)
